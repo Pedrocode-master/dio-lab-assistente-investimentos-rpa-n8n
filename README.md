@@ -170,3 +170,59 @@ Conecte o Agente de IA do N8N a um modelo como Gemini ou GPT para:
 **Bons estudos e mãos à obra** 🚀
 
 Se tiver dúvidas, lembre-se: a melhor forma de aprender é experimentando. Erre, corrija e celebre cada pequena vitória no caminho.
+
+
+
+/////////SOBRE O RESULTADO DO PROJEOT FINAL /////////////
+
+<img width="1248" height="337" alt="image" src="https://github.com/user-attachments/assets/cd3eead1-c0a3-496d-b8b4-648ab5c208cc" />
+
+USEI GEMINI, PORQUE ERA GRATUITO
+
+import requests
+from bs4 import BeautifulSoup
+
+URL_PAGINA = "https://digitalinnovationone.github.io/dio-lab-assistente-investimentos-rpa-n8n/"
+N8N_WEBHOOK = "https://urbanely-treasonable-rolanda.ngrok-free.dev/webhook-test/clientes"  # ex: https://arthur123123.app.n8n.cloud/webhook/clientes
+
+# 1) Baixar a página
+html = requests.get(URL_PAGINA, timeout=30).text
+
+# 2) Ler a tabela de clientes
+soup = BeautifulSoup(html, "html.parser")
+linhas = soup.select("#clientes tbody tr")
+clientes = []
+
+for linha in linhas:
+    colunas = linha.find_all("td")
+    cliente = {
+        "nome": colunas[0].get_text(strip=True),
+        "email": colunas[1].get_text(strip=True),
+        "saldo": colunas[2].get_text(strip=True),
+        "perfil": colunas[3].get_text(strip=True),
+    }
+    clientes.append(cliente)
+
+print("Clientes encontrados:", len(clientes))
+print("Exemplo 1º cliente:", clientes[0] if clientes else "nenhum")
+
+# 3) Enviar pro n8n
+payload = {"clientes": clientes}
+resp = requests.post(
+    N8N_WEBHOOK,
+    json=payload,
+    headers={"Content-Type": "application/json"},
+    timeout=60
+)
+
+print("Status:", resp.status_code)
+print("Headers:", dict(resp.headers))
+print("Resposta (primeiros 1500 chars):")
+print(resp.text[:1500])
+
+USEI NGROK PARA CONECTAR COM MINHA COLAB
+
+
+
+
+
